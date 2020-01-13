@@ -16,7 +16,7 @@ Create a virtual environment and install the requirements:
 
 Create a Tone Analyzer service by visiting the IBM Cloud Category:
 
-    https://cloud.ibm.com/catalog?search=label%3Alite
+    https://cloud.ibm.com/catalog/services/tone-analyzer
     
 Create a .env file with the below environment variables in the root directory found in the Manage section of your Tone Analyzer dashboard:
 
