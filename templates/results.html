@@ -68,7 +68,13 @@
         <div class="post-preview">
             <h2>Your Results</h2>
               <p>
-                  {{ diary }}
+                {% for result in results %}
+                  {{ result['text'] }} <br/>
+                  {% for tone in result['tones'] %}
+                    {{ tone['tone_name'] }} <br/>
+                    {{ tone['score'] }} <br/>
+                  {% endfor %} <br/><br/>
+                {% endfor %}
               </p>
         </div>
       </div>
