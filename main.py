@@ -1,17 +1,32 @@
-from flask import Flask, render_template, redirect, url_for, request
-from config import Config
-from forms import DiaryEntry
-
 import os
 import ast
 import json
+import pyrebase
+from flask import Flask, render_template, redirect, url_for, request
 from dotenv import load_dotenv
 from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
+from config import Config
+from forms import DiaryEntry
+
+
 app = Flask(__name__)
 app.config.from_object(Config)
 load_dotenv()
+
+config = {
+    "apiKey": os.getenv('apiKey'),
+    "authDomain": os.getenv('authDomain'),
+    "databaseURL": os.getenv('databaseURL'),
+    "projectId": os.getenv('projectId'),
+    "storageBucket": os.getenv('storageBucket'),
+    "messagingSenderId": os.getenv('messagingSenderId'),
+    "appId": os.getenv('appId'),
+    "measurementId": os.getenv('measurementId')
+}
+
+firebase = pyrebase.initialize_app(config)
 
 
 def tone_analyzer_api(text):
@@ -38,7 +53,8 @@ def index():
     if form.validate_on_submit():
         diary = form.text.data
         mood_json = json.loads(tone_analyzer_api(diary))['sentences_tone']
-        return render_template('results.html', results=mood_json)
+        print(mood_json)
+        return render_template('results.html', entries=[mood_json])
     return render_template('index.html', form=form)
 
 
@@ -47,7 +63,10 @@ def results():
     """
     Return the results.
     """
-    return render_template('results.html')
+    db = firebase.database()
+    entries = db.child("entries").get()
+    mood_results = [ast.literal_eval(entry['result']) for entry in entries.val()[1:]]
+    return render_template('results.html', entries=mood_results)
 
 
 if __name__ == "__main__":
