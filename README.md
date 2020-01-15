@@ -18,10 +18,22 @@ Create a Tone Analyzer service by visiting the IBM Cloud Category:
 
     https://cloud.ibm.com/catalog/services/tone-analyzer
     
+Create a Firebase database and connect it to your web application to obtain the configurations needed to connect:
+
+    https://firebase.google.com/
+
 Create a .env file with the below environment variables in the root directory found in the Manage section of your Tone Analyzer dashboard:
 
-    IBM_API_KEY=INSERT-API-KEY-HERE
-    IBM_URL=INSERT-URL-HERE
+    IBM_API_KEY=IBM_API_KEY
+    IBM_URL=IBM_URL
+    apiKey=apiKey
+    authDomain=authDomain
+    databaseURL=databaseURL
+    projectId=projectId
+    storageBucket=storageBucket
+    messagingSenderId=messagingSenderId
+    appId=appId
+    measurementId=measurementId
     
 Locally run the application by entering the following in the command line:
 
