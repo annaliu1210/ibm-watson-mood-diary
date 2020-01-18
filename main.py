@@ -47,25 +47,26 @@ def tone_analyzer_api(text):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """
-    Return the home page.
+    Return the home page to submit a text entry for mood analysis.
     """
     form = DiaryEntry()
     if form.validate_on_submit():
         diary = form.text.data
         mood_json = json.loads(tone_analyzer_api(diary))['sentences_tone']
-        print(mood_json)
-        return render_template('results.html', entries=[mood_json])
+        mood_dict = [{'entry': diary, 'result': mood_json}]
+        return render_template('results.html', entries=mood_dict)
     return render_template('index.html', form=form)
 
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
     """
-    Return the results.
+    Return the results page with entries and their mood analysis from the database.
     """
     db = firebase.database()
     entries = db.child("entries").get()
-    mood_results = [ast.literal_eval(entry['result']) for entry in entries.val()[1:]]
+    mood_results = [{'entry': entry['entry'], 'result': ast.literal_eval(entry['result'])}
+                    for entry in entries.val()[1:]]
     return render_template('results.html', entries=mood_results)
 
 

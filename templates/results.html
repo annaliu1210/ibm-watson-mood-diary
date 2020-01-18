@@ -23,6 +23,20 @@
 
 </head>
 
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+</style>
+
 <body>
 
   <!-- Navigation -->
@@ -66,18 +80,37 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         <div class="post-preview">
-            <h2>Your Results</h2>
-              <p>
-                {% for entry in entries %}
-                  {% for result in entry %}
-                    {{ result['text'] }} <br/>
-                    {% for tone in result['tones'] %}
-                      {{ tone['tone_name'] }} <br/>
-                      {{ tone['score'] }} <br/>
-                    {% endfor %} <br/><br/>
-                  {% endfor %}
-                {% endfor %}
-              </p>
+          <h2>Mood Diary Results</h2>
+            {% for entry in entries %}
+            <hr>
+              <p>{{ entry['entry'] }}</p>
+              {% for result in entry['result'] %}
+                <table>
+                  <tr>
+                    <th style="background-color: #dddddd;">Sentence #{{ result['sentence_id'] + 1 }}</th>
+                  </tr>
+                  <tr>
+                    <th>{{ result['text'] }}</th>
+                  </tr>
+                  <tr>
+                    <th>Mood Analysis</th>
+                  </tr>
+                  <tr>
+                    <table>
+                      <tr>
+                        {% if result['tones']|length == 0 %}
+                        <th>No moods available for this sentence.</th>
+                        {% endif %}
+                        {% for tone in result['tones'] %}
+                          <th>{{ tone['tone_name'] }}</th>
+                          <th>{{ tone['score'] }}</th>
+                        {% endfor %}
+                      </tr>
+                    </table>
+                  </tr>
+                </table>
+              {% endfor %}
+            {% endfor %}
         </div>
       </div>
     </div>
