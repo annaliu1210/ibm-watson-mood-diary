@@ -1,8 +1,7 @@
 import os
-import ast
 import json
 import pyrebase
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template
 from dotenv import load_dotenv
 from ibm_watson import ToneAnalyzerV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -50,10 +49,13 @@ def index():
     Return the home page to submit a text entry for mood analysis.
     """
     form = DiaryEntry()
+    db = firebase.database()
     if form.validate_on_submit():
         diary = form.text.data
         mood_json = json.loads(tone_analyzer_api(diary))['sentences_tone']
         mood_dict = [{'entry': diary, 'result': mood_json}]
+        data = {"entry": diary, 'result': mood_json}
+        db.child("entries").push(data)
         return render_template('results.html', entries=mood_dict)
     return render_template('index.html', form=form)
 
@@ -65,8 +67,8 @@ def results():
     """
     db = firebase.database()
     entries = db.child("entries").get()
-    mood_results = [{'entry': entry['entry'], 'result': ast.literal_eval(entry['result'])}
-                    for entry in entries.val()[1:]]
+    mood_results = [{'entry': entry.val()['entry'], 'result': entry.val()['result']}
+                    for entry in entries.each()]
     return render_template('results.html', entries=mood_results)
 
 
